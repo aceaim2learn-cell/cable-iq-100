@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Practise multi-port cable testing, read a live wiremap and export simulated results.">
+  <title>Aim2Learn | Cable IQ 100</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script defer src="./vendor/jspdf.umd.min.js"></script>
+  <script type="module" src="./app.mjs"></script>
+</head>
+<body>
+  <main>
+    <header class="banner">
+      <div class="brand"><img src="./aim2learn.png" alt="Aim2Learn" width="474" height="371"></div>
+      <div>
+        <p class="eyebrow">AIM2LEARN · TELECOMS TRAINING</p>
+        <h1>Cable IQ 100</h1>
+        <p class="tagline">Cable testing simulator</p>
+      </div>
+      <p class="intro">Set up a job, practise fault finding on a live wiremap, and export a simulated cable test report.</p>
+    </header>
+
+    <form id="tester" novalidate>
+      <section class="panel" aria-labelledby="job-title">
+        <h2 id="job-title">Job Details</h2>
+        <div class="fields">
+          <label>Site / Location<input name="site" placeholder="e.g. Aim2Learn Office" maxlength="100"></label>
+          <label>Address<input name="address" placeholder="e.g. London, UK" maxlength="160"></label>
+          <label>Tested by<input name="testerName" placeholder="Your name" maxlength="100"></label>
+          <label>Test date<input type="date" name="testDate"></label>
+          <label class="wide">Cable category <span class="hint">(sets thresholds)</span>
+            <select name="category">
+              <option value="5e">Cat 5e (100 MHz)</option>
+              <option value="6">Cat 6 (250 MHz)</option>
+              <option value="6a">Cat 6A (500 MHz)</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="ports-title">
+        <h2 id="ports-title">Ports / Cables</h2>
+        <p class="description">Enter a length per port to estimate attenuation and NEXT. Edit the pin connections to see the wiremap update.</p>
+        <div id="ports"></div>
+        <button type="button" class="add" id="add-port">+ Add Port</button>
+      </section>
+
+      <div class="actions">
+        <button type="submit">Generate Report &amp; PDF</button>
+        <button type="button" class="secondary" id="reset">Reset All</button>
+      </div>
+      <p id="message" class="error" role="alert" hidden></p>
+    </form>
+
+    <section class="panel report" id="report" tabindex="-1" aria-label="Cable test report" hidden></section>
+
+    <template id="port-template">
+      <article class="port">
+        <header class="port-head">
+          <h3 class="port-title"></h3>
+          <button type="button" class="remove">Remove</button>
+        </header>
+        <div class="fields port-fields">
+          <label>Port / Cable ID<input class="port-id" maxlength="100"></label>
+          <label>Length <span class="hint">(m)</span><input class="length" type="number" min="0" step="any" placeholder="e.g. 88.5"></label>
+        </div>
+        <div class="readings">
+          <div class="reading">Attenuation (computed)<div class="value attenuation"></div></div>
+          <div class="reading">NEXT (computed)<div class="value next"></div></div>
+        </div>
+        <details><summary>Show calculation</summary><pre class="calculation"></pre></details>
+        <div class="wiremap-head">
+          <h4>Wiremap <span class="hint">· Side A → Side B</span></h4>
+          <label class="preset-label">Practice preset
+            <select class="preset">
+              <option value="straight">Straight-through (T568B)</option>
+              <option value="open">Open at pin 6</option>
+              <option value="reversed">Reversed pair 3/6</option>
+              <option value="duplicate">Duplicate destination</option>
+              <option value="custom" disabled>Custom wiremap</option>
+            </select>
+          </label>
+        </div>
+        <div class="pins"></div>
+        <p class="wire-status" role="status"></p>
+        <div class="diagram"></div>
+      </article>
+    </template>
+  </main>
+</body>
+</html>
